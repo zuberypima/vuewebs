@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg bg-light">
+    <nav class="navbar navbar-expand-lg " :class="{'bg-light': !useDarkNavbar, 'bg-dark':useDarkNavbar}">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Navbar</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -23,24 +23,32 @@
                         <a class="nav-link active" aria-current="page"  :href="link.url">{{link.title}}</a>
                     </li> -->
                     <li v-for="(page, index) in pages" :key="index" class="nav-item">
-                        <a class="nav-link active" aria-current="page" :href="page.link.url" v-on:click="activePage = index">{{page.link.title}}</a>
+                        <a class="nav-link" :class="{active: activaPage == index}" aria-current="page"
+                            :href="page.link.url" v-on:click.prevent="activePage = index">{{page.link.title}}</a>
                     </li>
 
                 </ul>
             </div>
-        </div>
-    </nav>
-    <div id="content" class="container">
-        <h1>Hello Vue {{pages[activePage].pageTitle}}</h1>
-        <p>{{pages[activePage].content}}</p>
-    </div>
 
+            <form action="">
+                <button class="btn btn-primary" @click.prevent="useDarkNavbar = !useDarkNavbar">Click Me</button>
+            </form>
+        </div>
+
+    </nav>
+
+  <page-content 
+  :page-title="pages[activePage].pageTitle" 
+  :page-content="pages[activePage].content"></page-content>
 
     <script>
-        Vue.createApp({
+      const app=   Vue.createApp({
             data() {
                 return {
-                    activePage:0,
+                    activePage: 0,
+
+                    useDarkNavbar: false,
+                    theme: 'light',
                     pages: [
 
                         {
@@ -50,7 +58,7 @@
                         },
                         {
                             link: { title: 'About', url: 'about.html' },
-                            pageTitle: 'Master',
+                            pageTitle: 'About Page',
                             content: 'About Company Page'
                         },
 
@@ -61,9 +69,23 @@
                         }
 
                     ],
-                };
-            },
-        }).mount('body');
+                }
+
+            }
+        });
+
+        app.component('page-content', {
+            props:['pageTitle','pageContent'],
+            template: `
+             <div  class="container">
+              <h1>{{pageTitle}}</h1>
+              <h2>Hello Kaka </h2>
+            <p>{{pageContent}}</p>
+
+             </div> 
+            `
+        });
+        app.mount('body');
 
 
 
